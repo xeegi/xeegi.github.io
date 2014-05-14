@@ -63,9 +63,17 @@
 	}
 	
 	.used_frame {
-		background: transparent;
+		-webkit-animation: fadeout 0.4s forwards;
 	}
 	
+	@-webkit-keyframes fadein {
+		from { border-radius: 22px; }
+	}
+	
+	@-webkit-keyframes fadeout {
+		to { opacity: 0; }
+	}
+}
 </style>
 </head>
 <body>
@@ -101,8 +109,6 @@
 						localStorage.setItem("max_score", score);
 						maxScore = score;
 					}
-					
-					
 					
 					$('#score').text(score);
 					$('#max_score').text(maxScore);
