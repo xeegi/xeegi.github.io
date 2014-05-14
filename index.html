@@ -1,0 +1,207 @@
+<html>
+<head>
+<title>Woop!</title>
+<script src="http://code.jquery.com/jquery-1.11.1.min.js"></script>
+<link href='http://fonts.googleapis.com/css?family=Rokkitt:700' rel='stylesheet' type='text/css'>
+<style>
+	body {
+		background: antiquewhite;
+	}
+	
+	#main_frame {
+		width: 480px;
+		height: 480px;
+		border-radius: 6px;
+		border: #FFAAAA 4px solid;
+		background: seashell;
+		float: left;
+	}
+	
+	#score_board {
+		width: auto;
+		height: auto;
+		min-width: 100px;
+		border-radius: 6px;
+		background: seashell;
+		float: left;
+		margin: 20px;
+		padding: 10px;
+		font-family: 'Rokkitt', serif;
+		color: #8A7A25;
+	}
+	
+	#score, #max_score {
+		float: right;
+	}
+	
+	.small_frame {
+		width: 20px;
+		height: 20px;
+		border: 0px solid;
+		border-radius: 3px;
+		margin: 2px;
+		float: left;
+	}
+	
+	.small_frame:hover {
+		margin: 0px;
+		width: 24px;
+		height: 24px;
+	}
+	
+	.type_1 {
+		background: hsl(0,50%,50%);
+	}
+	.type_2 {
+		background: hsl(90,50%,50%);
+	}
+	.type_3 {
+		background: hsl(180,50%,50%);
+	}
+	.type_4 {
+		background: hsl(270,50%,50%);
+	}
+	
+	.used_frame {
+		background: transparent;
+	}
+	
+</style>
+</head>
+<body>
+	<div id="main_frame"></div>
+	<div id="score_board">
+	<div>Score: <span id='score'>0</span></div>
+	<div>Best: <span id='max_score'>0</span></div>
+	</div>
+</body>
+	<script>
+	$(document).ready(function(){
+	
+		var game_width = 20;
+		var game_height = 20;
+	
+		var score = 0;
+		var maxScore = localStorage.getItem("max_score") ? localStorage.getItem("max_score") : 0;
+		$('#max_score').text(maxScore);
+		var cellValue = 10;
+	
+		var count = 0;
+		for(var i = 0; i < game_height; i++) {
+			for(var j = 0; j < game_width; j++) {
+				var random_hue = 1 + Math.floor(Math.random() * 4);
+				var newDiv = document.createElement('div');
+				$(newDiv).addClass('small_frame type_' + random_hue);
+				$(newDiv).attr('id', count++);
+				$(newDiv).click(function(){
+					var totalCells = removeCell($(this));
+					score += totalCells * totalCells * cellValue;
+					
+					if(score > maxScore) {
+						localStorage.setItem("max_score", score);
+						maxScore = score;
+					}
+					
+					
+					
+					$('#score').text(score);
+					$('#max_score').text(maxScore);
+					
+					moveFreeCellsDown();
+				});
+				
+				$('#main_frame').append(newDiv);
+			}
+		}
+		
+		function removeCell(cell) {
+			var selectedId = parseInt($(cell).attr('id'));
+			var selectedType = $(cell).attr('class');
+
+			var count = 0;
+			
+			hideCell($(cell));
+			var topCell = getTopCell(cell);
+			if($(topCell).attr('class') == selectedType)
+				count += removeCell(topCell);
+			var bottomCell = getBottomCell(cell);
+			if($(bottomCell).attr('class') == selectedType)
+				count += removeCell(bottomCell);
+			var leftCell = getLeftCell(cell);
+			if(leftCell.attr('class') == selectedType)
+				count += removeCell(leftCell);
+			var rightCell = getRightCell(cell);
+			if($(rightCell).attr('class') == selectedType)
+				count += removeCell(rightCell);
+				
+			return count + 1;
+		}
+		
+		function getTopCell(cell) {
+			var selectedId = parseInt(cell.attr('id'));
+			if (selectedId - game_width >= 0) {
+				var leftCellId = '#' + (selectedId - game_width);
+				return $(leftCellId);
+			}
+			return $('');
+		}
+		
+		function getBottomCell(cell) {
+			var selectedId = parseInt(cell.attr('id'));
+			if (selectedId + game_width < game_width*game_height) {
+				var leftCellId = '#' + (selectedId + game_width);
+				return $(leftCellId);
+			}
+			return $('');
+		}
+		
+		function getLeftCell(cell) {
+			var selectedId = parseInt(cell.attr('id'));
+			if (selectedId % game_width) {
+				var leftCellId = '#' + (selectedId - 1);
+				return $(leftCellId);
+			}
+			return $('');	
+		}
+		
+		function getRightCell(cell) {
+			var selectedId = parseInt(cell.attr('id'));
+			if (selectedId + 1 < game_width*game_height && ((selectedId + 1) % game_width) != 0) {
+				var leftCellId = '#' + (selectedId + 1);
+				return $(leftCellId);
+			}
+			return $('');
+		}
+		
+		function hideCell(cell) {
+			$(cell).addClass('used_frame');
+		}
+		
+		function moveCellDown(cell) {
+			getBottomCell(cell).attr('class', cell.attr('class'));
+		}
+		
+		function canMoveCellDown(cell) {
+			var bottomCell = getBottomCell(cell);
+			return ( bottomCell.attr('class').indexOf('used_frame') > 0);
+		}
+		
+		function moveFreeCellsDown() {
+			do {
+				var didChange = false;
+				
+				$('.used_frame').each(function(index, usedFrame){
+					var topCell = getTopCell($(usedFrame));
+					if (parseInt($(usedFrame).attr('id')) >= game_width && topCell.attr('class').indexOf('used_frame') < 0) {
+						$(usedFrame).attr('class', topCell.attr('class'));
+						hideCell(topCell);
+						didChange = true;
+					}
+				});
+				
+			} while(didChange);
+		}
+	});
+
+	</script>
+</html>
