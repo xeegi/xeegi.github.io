@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bingo creator</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css"/>
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/bingo.js"></script>
+</head>
+<body>
+    <div class="settings_form">
+        <label for="no_of_games">Number of games:</label>
+        <input name="no_of_games" id="no_of_games" type="number" value="12" min="1"/><br/>
+        <label for="max_values">Max values:</label>
+        <input name="max_values" id="max_values" type="number" value="50" min="25"/>
+        <button title="Generate" type="submit" autofocus="true" onclick="newGame($('#no_of_games').val(),$('#max_values').val());">Generate</button>
+    </div>
+
+    <div id="bingo_frame"></div>
+
+    <script language="JavaScript" type="text/javascript">
+        pageLoaded();
+    </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+@media all {
+
+    table
+    {
+        border-collapse:collapse;
+        text-align: center;
+        font-size: xx-large;
+        float: left;
+        margin: 15px;
+        font-family: "Arial Black", Gadget, sans-serif;
+    }
+    td
+    {
+        border: 1px solid black;
+        width: 48px;
+    }
+
+    tr
+    {
+        height: 48px;
+    }
+}
+
+@media screen {
+    body
+    {
+        background-color: darkgray;
+    }
+
+    table {
+        background-color: gainsboro;
+        box-shadow: #616161 0px 0px 8px;
+        -moz-box-shadow: #616161 0px 0px 8px;
+
+    }
+}
+
+@media print {
+    .settings_form {
+        display: none;
+    }
+}
